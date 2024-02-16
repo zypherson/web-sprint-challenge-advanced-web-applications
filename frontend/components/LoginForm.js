@@ -23,11 +23,13 @@ export default function LoginForm(props) {
     setSpinnerOn(true)
    axios.post('http://localhost:9000/api/login', values)
     .then(res =>{
-      console.log('token')
+      console.log(res.data.token)
       console.log(res)
       setMessage(res.data.message)
       localStorage.setItem('token', res.data.token)
+
       navigate('/articles')
+      
       
     })
     .catch(err =>{
