@@ -213,4 +213,5 @@ describe('Advanced Applications', () => {
       await screen.findByText('Article 1 was deleted, Foo!', queryOptions, waitForOptions)
     })
   })
+  
 })

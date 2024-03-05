@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PrivateRoute from './PrivateRoute'
 import axios from 'axios'
 import { NavLink, Routes, Route, useNavigate } from 'react-router-dom'
 import Articles from './Articles'
@@ -27,11 +28,9 @@ export default function App() {
     // If a token is in local storage it should be removed,
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
-    // using the helper above.
-    localStorage.removeItem('token')
-    setMessage('Goodbye!')
-   redirectToLogin()
-   
+    localStorage.removeItem('token');
+    redirectToLogin()
+    setMessage("Goodbye!")
 
   }
 
@@ -72,6 +71,26 @@ export default function App() {
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
+    setMessage('')
+    setSpinnerOn(true)
+    const token = localStorage.getItem('token')
+        axios.get('http://localhost:9000/api/articles',{
+            headers:{
+                authorization: token
+            }
+        } )
+        .then(res=>{
+            console.log(res)
+            setArticles(res.data)
+        })
+        .catch(err=>{
+            console.log(err)
+            redirectToLogin()
+        })
+        .finally(()=>{
+          setSpinnerOn(false)
+        })
+
   }
 
   const postArticle = article => {
@@ -103,11 +122,15 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
+          <Route element={<PrivateRoute/>}>
+              <Route element={<ArticleForm />} path= "/articles" />
+              
+          </Route>
           <Route path="/" element={<LoginForm setMessage = {setMessage} setSpinnerOn= {setSpinnerOn} login = {login} />} />
           <Route path="articles" element={
             <>
               <ArticleForm />
-              <Articles />
+              <Articles setMessage = {setMessage} setSpinnerOn= {setSpinnerOn} getArticles={getArticles}/>
             </>
           } />
         </Routes>
