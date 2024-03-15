@@ -11,7 +11,8 @@ import Spinner from './Spinner'
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
 
-export default function App() {
+export default function App(props) {
+  
   // ✨ MVP can be achieved with these states
   const [message, setMessage] = useState('')
   const [articles, setArticles] = useState([])
@@ -62,7 +63,7 @@ export default function App() {
     
   
 
-  const getArticles = () => {
+   const getArticles = () => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
     // and launch an authenticated request to the proper endpoint.
@@ -71,21 +72,23 @@ export default function App() {
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
-    setMessage('')
-    setSpinnerOn(true)
     const token = localStorage.getItem('token')
+    setSpinnerOn(true)
+    setMessage('')
         axios.get('http://localhost:9000/api/articles',{
-            headers:{
-                authorization: token
-            }
-        } )
+          headers:{
+              authorization: token
+          }
+      } ) 
         .then(res=>{
-            console.log(res)
-            setArticles(res.data)
+           console.log(res)
+            setMessage(res.data.message)
+            setArticles(res.data.articles)
+            redirectToArticles()
         })
         .catch(err=>{
             console.log(err)
-            redirectToLogin()
+            
         })
         .finally(()=>{
           setSpinnerOn(false)
@@ -112,7 +115,7 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner spinnerOn={spinnerOn} />
+      <Spinner on ={spinnerOn} />
       <Message message={message} />
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
@@ -122,17 +125,19 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route element={<PrivateRoute/>}>
-              <Route element={<ArticleForm />} path= "/articles" />
+          {/* <Route element={<PrivateRoute/>}> */}
+              {/* <Route element={<ArticleForm />} path= "/articles" /> */}
               
-          </Route>
-          <Route path="/" element={<LoginForm setMessage = {setMessage} setSpinnerOn= {setSpinnerOn} login = {login} />} />
+          {/* </Route> */}
+          <Route path="/" element={<LoginForm setMessage = {setMessage} setSpinnerOn= {setSpinnerOn}  />} />
+          <Route path = '/' element={<PrivateRoute/>}>
           <Route path="articles" element={
             <>
               <ArticleForm />
-              <Articles setMessage = {setMessage} setSpinnerOn= {setSpinnerOn} getArticles={getArticles}/>
+              <Articles articles ={articles} setArticles = {setArticles} setMessage = {setMessage} setSpinnerOn= {setSpinnerOn} getArticles={getArticles}/>
             </>
           } />
+          </Route>
         </Routes>
         <footer>Bloom Institute of Technology 2024</footer>
       </div>

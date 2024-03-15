@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import PT from 'prop-types'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import Spinner from './Spinner'
+
+//Michael.wilcox@bloomtech.com
 const initialFormValues = {
   username: '',
   password: '',
@@ -11,7 +14,9 @@ export default function LoginForm(props) {
   const navigate = useNavigate()
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
-  const {setMessage, setSpinnerOn, login} = props
+  const {setMessage, setSpinnerOn} = props
+  
+
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -23,8 +28,8 @@ export default function LoginForm(props) {
     setSpinnerOn(true)
    axios.post('http://localhost:9000/api/login', values)
     .then(res =>{
-      console.log(res.data.token)
-      console.log(res)
+      
+      
       setMessage(res.data.message)
       localStorage.setItem('token', res.data.token)
 

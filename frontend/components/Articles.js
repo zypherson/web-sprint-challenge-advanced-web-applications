@@ -1,37 +1,29 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import axios from 'axios'
+
 import PT from 'prop-types'
 
+
 export default function Articles(props) {
-  const navigate = useNavigate()
-  const [articles, setArticles] = useState([])
+  
+  
   // ✨ where are my props? Destructure them here
-    const {setMessage, setSpinnerOn,getArticles} = props
+    const {deleteArticle,currentArticleId,setCurrentArticleId,getArticles,articles} = props
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
+  if(!window.localStorage.getItem('token')){
+   return  <Navigate to='/' />
+  }
+  
   
 
   useEffect(() => {
     // ✨ grab the articles here, on first render only
-    setMessage('')
-    setSpinnerOn(true)
-    const token = localStorage.getItem('token')
-        axios.get('http://localhost:9000/api/articles',{
-            headers:{
-                authorization: token
-            }
-        } )
-        .then(res=>{
-            console.log(res)
-            setArticles(res.data)
-        })
-        .catch(err=>{
-            console.log(err)
-            navigate('/')
-        })
-        .finally(()=>{
-          setSpinnerOn(false)
-        })
+    
+    getArticles()
+    
+    
   },[])
 
   return (
@@ -40,9 +32,9 @@ export default function Articles(props) {
     <div className="articles">
       <h2>Articles</h2>
       {
-        ![articles].length
+        !articles.length
           ? 'No articles yet'
-          : [articles].map(art => {
+          : articles.map(art => {
             return (
               <div className="article" key={art.article_id}>
                 <div>
@@ -51,8 +43,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={Function.prototype}>Edit</button>
-                  <button disabled={true} onClick={Function.prototype}>Delete</button>
+                  <button disabled={true} onClick={()=> setCurrentArticleId(art.article_id)}>Edit</button>
+                  <button disabled={true} onClick={()=> deleteArticle(art.article_id)}>Delete</button>
                 </div>
               </div>
             )
