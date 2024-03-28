@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import PT from 'prop-types'
 
 const initialFormValues = { title: '', text: '', topic: '' }
@@ -8,11 +9,32 @@ export default function ArticleForm(props) {
   // ✨ where are my props? Destructure them here
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-  })
+    if(values){
+      axios.post('http://localhost:9000/api/articles', values,{
+        headers:{
+            authorization: token
+        }
+    }) 
+      .then(res=>{
+        
+        
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+
+    }else{
+      setValues(initialFormValues)
+    }
+    
+   
+    
+  },[])
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -29,6 +51,15 @@ export default function ArticleForm(props) {
   const isDisabled = () => {
     // ✨ implement
     // Make sure the inputs have some values
+    const text = values.text.trim()
+    const title = values.title.trim()
+    
+
+    const isTextValid = text.length  >= 1
+    const isTitleValid = title.length  >= 1
+    const isTopicValid = values.topic = `React` || 'JavaScript' || 'Node' || 'a'
+    return !(isTextValid && isTitleValid && isTopicValid)
+
   }
 
   return (
@@ -51,7 +82,7 @@ export default function ArticleForm(props) {
         id="text"
       />
       <select onChange={onChange} id="topic" value={values.topic}>
-        <option value="">-- Select topic --</option>
+        <option value="a">-- Select topic --</option>
         <option value="JavaScript">JavaScript</option>
         <option value="React">React</option>
         <option value="Node">Node</option>

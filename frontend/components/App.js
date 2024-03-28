@@ -81,7 +81,7 @@ export default function App(props) {
           }
       } ) 
         .then(res=>{
-           console.log(res)
+          // console.log(res)
             setMessage(res.data.message)
             setArticles(res.data.articles)
             redirectToArticles()
@@ -101,6 +101,7 @@ export default function App(props) {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+
   }
 
   const updateArticle = ({ article_id, article }) => {
@@ -133,7 +134,7 @@ export default function App(props) {
           <Route path = '/' element={<PrivateRoute/>}>
           <Route path="articles" element={
             <>
-              <ArticleForm />
+              <ArticleForm currentArticleId = {currentArticleId} setCurrentArticleId={setCurrentArticleId} />
               <Articles articles ={articles} setArticles = {setArticles} setMessage = {setMessage} setSpinnerOn= {setSpinnerOn} getArticles={getArticles}/>
             </>
           } />

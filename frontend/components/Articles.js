@@ -52,7 +52,7 @@ export default function Articles(props) {
       }
     </div>
   )
-}
+}   
 
 // 🔥 No touchy: Articles expects the following props exactly:
 Articles.propTypes = {
