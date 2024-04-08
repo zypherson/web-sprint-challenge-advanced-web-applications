@@ -10,6 +10,9 @@ export default function Articles(props) {
   
   // ✨ where are my props? Destructure them here
     const {deleteArticle,currentArticleId,setCurrentArticleId,getArticles,articles} = props
+  
+
+
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
   if(!window.localStorage.getItem('token')){
@@ -43,8 +46,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={()=> setCurrentArticleId(art.article_id)}>Edit</button>
-                  <button disabled={true} onClick={()=> deleteArticle(art.article_id)}>Delete</button>
+                  <button disabled={false} onClick={()=> setCurrentArticleId(art.article_id)}>Edit</button>
+                  <button disabled={false} onClick={()=> deleteArticle(art.article_id)}>Delete</button>
                 </div>
               </div>
             )

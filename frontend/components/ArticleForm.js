@@ -2,43 +2,69 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import PT from 'prop-types'
 
-const initialFormValues = { title: '', text: '', topic: '' }
+
+ const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
-  const [values, setValues] = useState(initialFormValues)
+  //const [values, setValues] = useState(initialFormValues)
+  
+
   // ✨ where are my props? Destructure them here
+  const {currentArticle,postArticle,updateArticle,setCurrentArticleId, values, setValues} = props
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-    if(values){
-      axios.post('http://localhost:9000/api/articles', values,{
-        headers:{
-            authorization: token
-        }
-    }) 
-      .then(res=>{
-        
-        
+    if(currentArticle){
+      setValues({
+        title:currentArticle.title,
+        text:currentArticle.text,
+        topic:currentArticle.topic
       })
-      .catch(err=>{
-        console.log(err)
-      })
-
-    }else{
-      setValues(initialFormValues)
     }
-    
    
+      },[currentArticle])
+  
+  
+      // const postArticle = () => {
+      //   // ✨ implement
+      //   // The flow is very similar to the `getArticles` function.
+      //   // You'll know what to do! Use log statements or breakpoints
+      //   // to inspect the response from the server.
+        
+      //   const token = localStorage.getItem('token')
+      //   axios.post('http://localhost:9000/api/articles', values,{
+      //       headers:{
+      //           authorization: token
+      //       }
+      //   }) 
+      //     .then(res=>{
+      //       console.log(res)
+      //       setValues({
+      //         title:title,
+      //         text:text,
+      //         topic:topic
+      //       })
+      //     })
+      //     .catch(err=>{
+      //       console.log(err)
+      //     })
+      
     
-  },[])
+      // }
 
   const onChange = evt => {
+
+
     const { id, value } = evt.target
     setValues({ ...values, [id]: value })
+
+    
+  }
+  const cancelEdit = () =>{
+    setValues(initialFormValues)
   }
 
   const onSubmit = evt => {
@@ -46,6 +72,17 @@ export default function ArticleForm(props) {
     // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
+   // postArticle()
+    const article = {  
+      title: values.title,
+      topic: values.topic,
+      text: values.text
+    }
+    currentArticle
+    ? updateArticle({article, article_id: currentArticle.article_id})
+    : postArticle(article)
+   
+    setValues(initialFormValues)
   }
 
   const isDisabled = () => {
@@ -57,7 +94,7 @@ export default function ArticleForm(props) {
 
     const isTextValid = text.length  >= 1
     const isTitleValid = title.length  >= 1
-    const isTopicValid = values.topic = `React` || 'JavaScript' || 'Node' || 'a'
+    const isTopicValid = values.topic === 'JavaScript' || 'Node' || 'React'
     return !(isTextValid && isTitleValid && isTopicValid)
 
   }
@@ -82,13 +119,13 @@ export default function ArticleForm(props) {
         id="text"
       />
       <select onChange={onChange} id="topic" value={values.topic}>
-        <option value="a">-- Select topic --</option>
+        <option value="">-- Select topic --</option>
         <option value="JavaScript">JavaScript</option>
         <option value="React">React</option>
         <option value="Node">Node</option>
       </select>
       <div className="button-group">
-        <button disabled={isDisabled()} id="submitArticle">Submit</button>
+        <button disabled ={isDisabled()} id="submitArticle">Submit</button>
         <button onClick={Function.prototype}>Cancel edit</button>
       </div>
     </form>
