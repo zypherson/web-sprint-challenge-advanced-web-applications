@@ -86,7 +86,6 @@ export default function App(props) {
           }
       } ) 
         .then(res=>{
-          console.log(res.data.articles)
             setMessage(res.data.message)
             setArticles(res.data.articles)
             redirectToArticles()
@@ -148,19 +147,23 @@ export default function App(props) {
   })  
   .then(res=>{
     console.log(res)
+    let articles1 = [...articles]
     setMessage(res.data.message)
+    articles1 = articles1.map(art =>{
+      if(res.data.article.article_id === art.article_id){
+          return res.data.article
+      }else{
+        return art
+      }
+      
+    })
+    setArticles(articles1)
     
-    
-    
-    
-  })
+     })
   .catch(err =>{
     console.log(err)
   })
-
-
-    
-  }
+}
 
   const deleteArticle = article_id => {
     // ✨ implement
@@ -171,6 +174,11 @@ export default function App(props) {
       }
   })  
   .then(res =>{
+    console.log(res)
+    let articles2 = [...articles]
+    const deletedResult = articles2.filter(art => article_id !== art.article_id)
+    setArticles(deletedResult)
+
     setMessage(res.data.message)
     
   })
